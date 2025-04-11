@@ -8,7 +8,7 @@ const CoinItem = ({ coin, toggleFavorite, favorites }) => {
     return (
         <div className="bg-gray-800 p-5 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
             <h3 className="text-2xl font-semibold">
-                <Link to={`/coin/${coin.ID}`}>{coin.NAME} ({coin.SYMBOL})</Link>
+                <Link to={`/coin/${coin.SYMBOL}`}>{coin.NAME}</Link>
             </h3>
             <p>Price: ${parseFloat(coin.PRICE_USD || 0).toFixed(2)}</p>
             <p className={priceChange < 0 ? 'text-red-500' : 'text-green-500'}>
