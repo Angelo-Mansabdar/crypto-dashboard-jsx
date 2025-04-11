@@ -5,52 +5,46 @@ import CoinList from '../components/CoinList';
 const CoinListPage = () => {
     const [coins, setCoins] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
     const [favorites, setFavorites] = useState([]);
 
-    // Haal de coins op van de CoinDesk API
     useEffect(() => {
-        axios.get('https://data-api.coindesk.com/asset/v1/top/list', {
-            params: { page: 1, page_size: 100 }  // Fetch the first 100 coins
-        })
-            .then(response => {
-                const coinData = response.data?.Data?.LIST || [];
-                setCoins(coinData);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                setLoading(false);
-            });
+        const fetchCoins = async () => {
+            try {
+                const response = await axios.get('https://data-api.coindesk.com/asset/v1/top/list', {
+                    params: { page: 1, page_size: 100 }
+                });
+                setCoins(response.data.Data.LIST);
+            } catch (error) {
+                console.error('Error fetching CoinDesk data:', error);
+            }
+        };
+
+        fetchCoins();
     }, []);
 
-    // Haal favorieten op uit localStorage
     useEffect(() => {
         const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
         setFavorites(storedFavorites);
     }, []);
 
-    // Sla favorieten op in localStorage wanneer ze veranderen
     useEffect(() => {
         localStorage.setItem('favorites', JSON.stringify(favorites));
     }, [favorites]);
 
-    // Filter coins op basis van de zoekterm
+    const toggleFavorite = (coin) => {
+        setFavorites(prevFavorites => {
+            if (prevFavorites.some(fav => fav.ID === coin.ID)) {
+                return prevFavorites.filter(fav => fav.ID !== coin.ID);
+            } else {
+                return [...prevFavorites, coin];
+            }
+        });
+    };
+
     const filteredCoins = coins.filter(coin =>
         coin.NAME.toLowerCase().includes(searchTerm.toLowerCase()) ||
         coin.SYMBOL.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    // Voeg of verwijder een coin uit de favorieten
-    const toggleFavorite = (coin) => {
-        setFavorites(prevFavorites => {
-            if (prevFavorites.some(fav => fav.ID === coin.ID)) {
-                return prevFavorites.filter(fav => fav.ID !== coin.ID); // Verwijder coin uit favorieten
-            } else {
-                return [...prevFavorites, coin]; // Voeg coin toe aan favorieten
-            }
-        });
-    };
 
     return (
         <div className="p-6">
@@ -67,15 +61,15 @@ const CoinListPage = () => {
                 />
             </div>
 
-            {/* Wacht totdat de data geladen is */}
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
+            {/* Show filtered coins or message */}
+            {filteredCoins.length > 0 ? (
                 <CoinList
                     coins={filteredCoins}
                     toggleFavorite={toggleFavorite}
                     favorites={favorites}
                 />
+            ) : (
+                <p>No coins available</p>
             )}
         </div>
     );

@@ -26,19 +26,19 @@ const App = () => {
                                 <Link to="/catgif">Gratis Ram Downloaden</Link>
                             </li>
                             <li className="text-lg py-2 hover:bg-gray-700 cursor-pointer">
-                                <Link to="/favorites">Favorite Coins</Link> {/* Voeg link naar favorieten toe */}
+                                <Link to="/favorites">Favorite Coins</Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Main content */}
+                    {/* Routes */}
                     <div className="flex-1 p-6">
                         <Routes>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/coinlist" element={<CoinListPage />} />
                             <Route path="/catgif" element={<CatGifPage />} />
                             <Route path="/coin/:coinId" element={<CoinDetailPage />} />
-                            <Route path="/favorites" element={<FavoriteCoinsPage />} /> {/* Voeg route voor favorieten toe */}
+                            <Route path="/favorites" element={<FavoriteCoinsPage />} />
                         </Routes>
                     </div>
                 </div>

@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import CoinList from '../components/CoinList'; // CoinList component
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Dashboard = () => {
     const [coins, setCoins] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCoins = async () => {
@@ -16,19 +14,14 @@ const Dashboard = () => {
                 const response = await axios.get('https://data-api.coindesk.com/asset/v1/top/list', {
                     params: { page: 1, page_size: 100 }
                 });
-
-                const coinData = response.data?.Data?.LIST || [];
-                setCoins(coinData);
+                setCoins(response.data.Data.LIST);
             } catch (error) {
                 console.error('Error fetching CoinDesk data:', error);
-            } finally {
-                setLoading(false);
             }
         };
 
         fetchCoins();
     }, []);
-
 
     const topCoins = coins.slice(0, 10);
 
@@ -40,18 +33,18 @@ const Dashboard = () => {
         }]
     };
 
-
     return (
         <div className="p-6">
-            <h2 className="text-3xl font-semibold">Crypto Dashboard</h2>
-
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
+            {/* Directly render the chart once data is available */}
+            {topCoins.length > 0 ? (
                 <>
                     <h3 className="text-2xl font-semibold">Top 10 Coins Market Share</h3>
-                    <Doughnut data={chartData} />
+                    <div className="w-200 h-200">
+                        <Doughnut data={chartData} />
+                    </div>
                 </>
+            ) : (
+                <p>No data available</p>  // Fallback message if no coins are available
             )}
         </div>
     );

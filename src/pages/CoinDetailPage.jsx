@@ -5,31 +5,24 @@ import axios from 'axios';
 const CoinDetailPage = () => {
     const { coinId } = useParams(); // Get the coinId (symbol like BTC, ETH) from the URL
     const [coin, setCoin] = useState(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch the top assets from the CoinDesk API (list of coins)
-        axios.get(`https://data-api.coindesk.com/asset/v1/top/list?page=1&page_size=100`)
-            .then(response => {
-                // Look for the coin in the list by matching the SYMBOL (e.g., BTC, ETH)
+        const fetchCoinDetails = async () => {
+            try {
+                const response = await axios.get(`https://data-api.coindesk.com/asset/v1/top/list?page=1&page_size=100`);
                 const coinData = response.data?.Data?.LIST.find(coin => coin.SYMBOL.toLowerCase() === coinId.toLowerCase());
 
                 if (coinData) {
-                    setCoin(coinData);  // Update state with the coin's metadata
+                    setCoin(coinData);
                 } else {
                     console.error('Coin not found in the response');
                 }
-                setLoading(false);
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching coin details:', error);
-                setLoading(false);
-            });
-    }, [coinId]);  // Dependency array ensures the effect runs again when coinId changes
-
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+            }
+        };
+        fetchCoinDetails();
+    }, [coinId]);
 
     if (!coin) {
         return <p>Coin not found!</p>;

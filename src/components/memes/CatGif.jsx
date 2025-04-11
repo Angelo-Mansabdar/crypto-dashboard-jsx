@@ -7,7 +7,7 @@ const CatGif = () => {
                  data-postid="16689995327643035486"
                  data-share-method="host"
                  data-aspect-ratio="0.610442"
-                 data-width="30%"  // Adjust the width to make it smaller
+                 data-width="30%"
             >
                 <a href="https://tenor.com/view/jinx-cat-javascript-js-jinx-gif-16689995327643035486">
                     Jinx Cat Javascript GIF
