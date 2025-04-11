@@ -8,11 +8,14 @@ const CoinListPage = () => {
     const [loading, setLoading] = useState(true);
     const [favorites, setFavorites] = useState([]);
 
-    // Haal de coins op van de API
+    // Haal de coins op van de CoinDesk API
     useEffect(() => {
-        axios.get('https://api.coincap.io/v2/assets')
+        axios.get('https://data-api.coindesk.com/asset/v1/top/list', {
+            params: { page: 1, page_size: 100 }  // Fetch the first 100 coins
+        })
             .then(response => {
-                setCoins(response.data.data);
+                const coinData = response.data?.Data?.LIST || [];
+                setCoins(coinData);
                 setLoading(false);
             })
             .catch(error => {
@@ -34,15 +37,15 @@ const CoinListPage = () => {
 
     // Filter coins op basis van de zoekterm
     const filteredCoins = coins.filter(coin =>
-        coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+        coin.NAME.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        coin.SYMBOL.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Voeg of verwijder een coin uit de favorieten
     const toggleFavorite = (coin) => {
         setFavorites(prevFavorites => {
-            if (prevFavorites.some(fav => fav.id === coin.id)) {
-                return prevFavorites.filter(fav => fav.id !== coin.id); // Verwijder coin uit favorieten
+            if (prevFavorites.some(fav => fav.ID === coin.ID)) {
+                return prevFavorites.filter(fav => fav.ID !== coin.ID); // Verwijder coin uit favorieten
             } else {
                 return [...prevFavorites, coin]; // Voeg coin toe aan favorieten
             }

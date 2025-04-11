@@ -11,25 +11,35 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('https://api.coincap.io/v2/assets')
-            .then(response => {
-                setCoins(response.data.data);
+        const fetchCoins = async () => {
+            try {
+                const response = await axios.get('https://data-api.coindesk.com/asset/v1/top/list', {
+                    params: { page: 1, page_size: 100 }
+                });
+
+                const coinData = response.data?.Data?.LIST || [];
+                setCoins(coinData);
+            } catch (error) {
+                console.error('Error fetching CoinDesk data:', error);
+            } finally {
                 setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                setLoading(false);
-            });
+            }
+        };
+
+        fetchCoins();
     }, []);
 
-    const topCoins = coins.slice(0, 10); // Top 10 coins
+
+    const topCoins = coins.slice(0, 10);
+
     const chartData = {
-        labels: topCoins.map(coin => coin.name),
+        labels: topCoins.map(coin => coin.NAME),
         datasets: [{
-            data: topCoins.map(coin => parseFloat(coin.marketCapUsd)),
+            data: topCoins.map(coin => coin.CIRCULATING_MKT_CAP_USD),
             backgroundColor: topCoins.map((_, index) => `rgba(${index * 25}, 100, 255, 0.5)`),
         }]
     };
+
 
     return (
         <div className="p-6">

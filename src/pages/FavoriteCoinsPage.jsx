@@ -12,8 +12,9 @@ const FavoriteCoinsPage = () => {
 
     // Verwijder een coin uit de favorieten
     const toggleFavorite = (coin) => {
-        const updatedFavorites = favorites.filter(fav => fav.id !== coin.id); // Verwijder de coin
-        setFavorites(updatedFavorites);
+        // Filter de specifieke coin uit de favorietenlijst
+        const updatedFavorites = favorites.filter(fav => fav.ID !== coin.ID); // Verwijder de coin op basis van ID
+        setFavorites(updatedFavorites); // Werk de state bij
         localStorage.setItem('favorites', JSON.stringify(updatedFavorites)); // Werk localStorage bij
     };
 
@@ -26,7 +27,7 @@ const FavoriteCoinsPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {favorites.map(coin => (
                         <CoinItem
-                            key={coin.id}
+                            key={coin.ID} // Gebruik 'ID' van CoinDesk API
                             coin={coin}
                             toggleFavorite={toggleFavorite} // Geef toggleFavorite door aan CoinItem
                             favorites={favorites} // Geef favorieten door aan CoinItem

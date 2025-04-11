@@ -7,7 +7,7 @@ const CoinList = ({ coins, toggleFavorite, favorites }) => {
             {coins.length > 0 ? (
                 coins.map(coin => (
                     <CoinItem
-                        key={coin.id}
+                        key={coin.ID} // Use coin.ID instead of coin.id
                         coin={coin}
                         toggleFavorite={toggleFavorite}
                         favorites={favorites}
